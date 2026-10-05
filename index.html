@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEATH NOTE ─ デスノート</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500&family=Noto+Serif+JP:wght@200;300&family=Aref+Ruqaa:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* ===== طبقات نسيج الورق الحقيقي ===== */
+
+  /* 1. مسام دقيقة جدًا (الخام الأساسي) */
+  --grain-fine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='a'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2.5' numOctaves='5' seed='9'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23a)'/%3E%3C/svg%3E");
+
+  /* 2. ألياف أفقية طويلة (اللي بتشوفها في الورق المقوى) */
+  --fiber-long: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='700' height='700'%3E%3Cfilter id='b'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.002 1.2' numOctaves='3' seed='14'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='700' height='700' filter='url(%23b)' opacity='0.7'/%3E%3C/svg%3E");
+
+  /* 3. بقع تعتيق كبيرة */
+  --stains: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='c'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005' numOctaves='5' seed='22'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='500' height='500' filter='url(%23c)' opacity='0.45'/%3E%3C/svg%3E");
+
+  /* 4. عدم انتظام اللون (المُوجن الخفيف) */
+  --mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23m)' opacity='0.5'/%3E%3C/svg%3E");
+
+  /* 5. نقاط بقع حبر/رطوبة */
+  --spots: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='sp'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.04' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.2 0 0 0 0 0.05 0 0 0 0.4 0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23sp)'/%3E%3C/svg%3E");
+
+  /* 6. خطوط أفقية رفيعة (ألياف دقيقة) */
+  --lines-fine: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='4'%3E%3Cpath d='M0 1.5h10M0 3h10' stroke='%23a09070' stroke-width='0.15' opacity='0.3'/%3E%3C/svg%3E");
+
+  /* 7. حبيبات الشاشة (خارجية) */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+
+  --jp:'Noto Serif JP','Yu Mincho',serif;
+  --en:'Cinzel','Times New Roman',serif;
+  --ar:'Aref Ruqaa','Amiri',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  background:#000;
+  display:grid;place-items:center;
+  font-family:var(--en);
+  -webkit-font-smoothing:antialiased;
+  cursor:pointer;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ========== الخلفية ========== */
+.bg{position:fixed;inset:0;overflow:hidden;background:#000;z-index:0}
+.blob{position:absolute;border-radius:50%;filter:blur(110px);will-change:transform;opacity:.5}
+.b1{width:65vmax;height:65vmax;left:-18vmax;top:-14vmax;
+    background:radial-gradient(circle,rgba(42,52,92,.55),transparent 70%);
+    animation:drift1 28s ease-in-out infinite}
+.b2{width:55vmax;height:55vmax;right:-14vmax;bottom:-18vmax;
+    background:radial-gradient(circle,rgba(78,16,26,.45),transparent 70%);
+    animation:drift2 34s ease-in-out infinite}
+.b3{width:45vmax;height:45vmax;left:32%;top:52%;
+    background:radial-gradient(circle,rgba(26,26,34,.7),transparent 70%);
+    animation:drift3 23s ease-in-out infinite;transform:translate(-50%,-50%)}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(7vmax,5vmax) scale(1.15)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1.1)}50%{transform:translate(-6vmax,-7vmax) scale(.95)}}
+@keyframes drift3{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-42%,-58%) scale(1.2)}}
+
+.aura{position:absolute;left:50%;top:47%;width:130vmin;height:130vmin;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(150,165,215,.14) 0%,rgba(90,40,55,.08) 28%,transparent 68%);
+  filter:blur(30px);animation:auraPulse 7s ease-in-out infinite;pointer-events:none}
+@keyframes auraPulse{0%,100%{opacity:.65;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.09)}}
+
+.vignette{position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 12%,rgba(0,0,0,.4) 45%,rgba(0,0,0,.85) 70%,#000 90%)}
+
+#dust{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+.grain{position:fixed;inset:-60%;background-image:var(--noise);background-repeat:repeat;
+  opacity:.045;z-index:20;pointer-events:none;animation:grainShift .7s steps(5) infinite}
+@keyframes grainShift{
+  0%{transform:translate(0,0)}20%{transform:translate(-2%,1.5%)}40%{transform:translate(1.5%,-2%)}
+  60%{transform:translate(-1.5%,-1%)}80%{transform:translate(2%,1%)}100%{transform:translate(0,0)}}
+
+/* ========== المسرح — بيغطي الشاشة كلها للضغط ========== */
+.stage{position:relative;z-index:2;perspective:2200px;perspective-origin:50% 44%;
+  padding:120px;cursor:pointer}
+.parallax{transform-style:preserve-3d;will-change:transform}
+.float{transform-style:preserve-3d;animation:floaty 8s ease-in-out infinite}
+@keyframes floaty{
+  0%,100%{transform:translateY(-10px) rotateZ(-.4deg)}
+  50%{transform:translateY(10px) rotateZ(.4deg)}}
+
+/* ========== الدفتر ========== */
+.book{
+  position:relative;
+  width:320px;height:460px;
+  transform-style:preserve-3d;
+  transform:rotateX(-5deg) rotateY(-20deg);
+  transition:transform 1.8s cubic-bezier(.5,.05,.2,1);
+  will-change:transform;
+}
+.book.open{transform:translateX(85px) rotateX(-4deg) rotateY(-7deg)}
+
+/* الظل */
+.shadow{
+  position:absolute;left:50%;bottom:-52px;
+  width:380px;height:60px;transform:translateX(-50%);
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.95),transparent 72%);
+  filter:blur(20px);z-index:-1;
+  transition:all 1.8s cubic-bezier(.5,.05,.2,1);
+  pointer-events:none;
+}
+.book.open .shadow{width:600px;left:62%;opacity:.85}
+
+/* ============================================================
+   كومة الورق (سمك الدفتر) — صفحة ورا صفحة
+   ============================================================ */
+.pages-stack{
+  position:absolute;
+  inset:0;
+  transform:translateZ(0);
+  border-radius:2px 6px 6px 2px;
+  background:
+    /* حافة الصفحات من اليمين — خطوط رفيعة */
+    repeating-linear-gradient(90deg,
+      #ddd5bc 0px, #ddd5bc 0.6px,
+      #b8af95 0.7px,
+      #d0c7ad 1px, #d0c7ad 1.2px,
+      #a89f85 1.4px,
+      #ccc3a9 1.6px, #ccc3a9 1.8px),
+    /* حافة الصفحات من الأسفل */
+    repeating-linear-gradient(0deg,
+      #ddd5bc 0px, #ddd5bc 0.6px,
+      #b8af95 0.7px,
+      #d0c7ad 1px, #d0c7ad 1.2px,
+      #a89f85 1.4px,
+      #ccc3a9 1.6px, #ccc3a9 1.8px);
+  background-size: 12px 100%, 100% 12px;
+  background-position: right bottom, right bottom;
+  background-repeat: no-repeat, no-repeat;
+  box-shadow:
+    /* سماكة إجمالية */
+    10px 0 0 -1px #b0a78d,
+    12px 0 0 -1px #a89f85,
+    14px 0 0 -2px #a0977d,
+    0 10px 0 -1px #b0a78d,
+    0 12px 0 -1px #a89f85,
+    0 14px 0 -2px #a0977d,
+    /* ظل خارجي عميق */
+    20px 24px 50px -8px rgba(0,0,0,.95);
+}
+
+/* ============================================================
+   الصفحة الأولى — ورق حقيقي بعمق
+   ============================================================ */
+.first-page{
+  position:absolute;
+  top:1px;left:1px;right:8px;bottom:8px;
+  transform:translateZ(4px);
+  border-radius:1px 4px 4px 1px;
+  background-color:#ebe2c6;
+  background-image:
+    /* ترتيب مهم: كل طبقة فوق اللي قبلها */
+    var(--grain-fine),      /* مسام */
+    var(--fiber-long),      /* ألياف */
+    var(--stains),          /* بقع تعتيق */
+    var(--mottle),          /* تموج لوني */
+    var(--spots),           /* بقع حبر */
+    /* خطوط الكتابة */
+    repeating-linear-gradient(180deg,
+      transparent 0px, transparent 26px,
+      rgba(72,92,122,.28) 26px, rgba(72,92,122,.28) 27px,
+      transparent 27px, transparent 28px),
+    /* الهامش الأحمر */
+    linear-gradient(90deg,
+      transparent 0px, transparent 48px,
+      rgba(170,45,45,.42) 48px, rgba(170,45,45,.42) 49.2px,
+      transparent 49.2px),
+    /* خط عمودي باهت عند حرف الكتاب (المشرط) */
+    linear-gradient(90deg,
+      rgba(90,60,20,.08) 0px, rgba(90,60,20,.08) 2px,
+      transparent 2px, transparent 6px,
+      rgba(90,60,20,.05) 6px, rgba(90,60,20,.05) 7px,
+      transparent 7px),
+    /* إضاءة علوية */
+    radial-gradient(ellipse at 50% -10%,
+      rgba(255,253,240,.65) 0%,
+      rgba(255,250,230,.15) 40%,
+      transparent 65%),
+    /* ظل تجويف الوسط */
+    radial-gradient(ellipse at 50% 50%,
+      transparent 40%,
+      rgba(120,95,55,.06) 72%,
+      rgba(100,70,30,.18) 100%);
+  background-blend-mode:
+    multiply,       /* grain */
+    multiply,       /* fiber */
+    multiply,       /* stains */
+    multiply,       /* mottle */
+    multiply,       /* spots */
+    normal,         /* lines */
+    normal,         /* margin */
+    normal,         /* binder mark */
+    screen,         /* top light */
+    multiply;       /* edge shade */
+
+  box-shadow:
+    /* ظل داخلي عند العمود */
+    inset 34px 0 55px -34px rgba(60,40,10,.45),
+    inset 45px 0 30px -50px rgba(60,40,10,.3),
+    /* ظل عند حرف الكتاب */
+    inset -10px 0 16px -12px rgba(70,50,20,.3),
+    /* ظل علوي وسفلي خفيف */
+    inset 0 -12px 16px -14px rgba(70,50,20,.2),
+    inset 0 12px 16px -14px rgba(70,50,20,.14),
+    /* انعكاس حبر باهت */
+    inset 0 0 0 0.5px rgba(140,110,70,.12);
+
+  padding:24px 22px 24px 62px;
+  display:flex;flex-direction:column;overflow:hidden;
+  /* انحناء بسيط للورقة (واقعية) */
+  filter: drop-shadow(0 0 0.5px rgba(150,120,70,.3));
+}
+
+/* خط الورق الداخلي — بيبان في الفتحة */
+.first-page::after{
+  content:'';
+  position:absolute;
+  top:8%;bottom:8%;left:0;
+  width:14px;
+  background:linear-gradient(90deg,
+    rgba(80,55,20,.35) 0%,
+    rgba(80,55,20,.15) 30%,
+    transparent 100%);
+  pointer-events:none;
+  border-radius:2px 0 0 2px;
+}
+
+.page-header{
+  font-family:var(--jp);
+  font-size:8px;font-weight:300;
+  letter-spacing:.42em;
+  color:rgba(70,58,42,.5);
+  text-align:center;
+  padding-bottom:8px;
+  border-bottom:1px solid rgba(70,58,42,.2);
+  margin-bottom:14px;
+}
+
+/* ========== الاسم بالحبر الأحمر ========== */
+.written-name{
+  font-family:var(--ar);
+  font-weight:700;
+  font-size:32px;
+  line-height:30px;
+  direction:rtl;
+  text-align:right;
+  padding-top:2px;
+  padding-right:4px;
+  color:#8b0a0a;
+  text-shadow:
+    /* ظل الحبر على الورق */
+    0.4px 0.4px 0.6px rgba(70,0,0,.55),
+    /* انتشار الحبر في المسام */
+    0 0 1px rgba(150,12,12,.6),
+    0 0 2px rgba(120,5,5,.3),
+    0 0 4px rgba(100,0,0,.15),
+    /* لمعة الحبر الطازج */
+    -0.3px -0.3px 0.5px rgba(200,40,40,.35);
+  transform:rotate(-1deg);
+  transform-origin:right top;
+  opacity:0;
+  filter:blur(7px);
+  clip-path:inset(0 0 0 100%);
+  transition:opacity .4s, filter .4s, clip-path .4s;
+  will-change:opacity,filter,clip-path;
+}
+.book.open .written-name{
+  opacity:1;
+  filter:blur(0);
+  clip-path:inset(0 0 0 0);
+  transition:
+    opacity 1.2s ease 1.8s,
+    filter 1.5s ease 1.8s,
+    clip-path 2s cubic-bezier(.6,0,.3,1) 1.8s;
+}
+.written-name .arrow{display:inline-block;padding:0 6px;font-size:.95em;vertical-align:-1px}
+.written-name .skull{
+  display:inline-block;
+  font-family:'Arial','Segoe UI Symbol',sans-serif;
+  font-size:1.05em;vertical-align:-3px;padding:0 2px;
+  filter:sepia(1) saturate(8) hue-rotate(-18deg) brightness(.6);
+}
+
+/* ============================================================
+   الغلاف
+   ============================================================ */
+.cover{
+  position:absolute;top:0;left:0;
+  width:100%;height:100%;
+  transform-style:preserve-3d;
+  transform-origin:0% 50%;
+  transform:translateZ(22px);
+  transition:transform 2.4s cubic-bezier(.45,.05,.15,1);
+  will-change:transform;
+}
+.book.open .cover{transform:translateZ(22px) rotateY(-178deg)}
+.book.opening .cover{filter:blur(1.2px)}
+
+.cover-face{
+  position:absolute;inset:0;
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+
+/* ---- وش الغلاف الأمامي ---- */
+.cover-front{
+  background-color:#050507;
+  background-image:
+    radial-gradient(130% 95% at 50% -10%, rgba(255,255,255,.075), transparent 58%),
+    radial-gradient(90% 70% at 20% 110%, rgba(120,140,200,.05), transparent 60%),
+    var(--noise);
+  background-blend-mode:screen,screen,overlay;
+  box-shadow:
+    inset 0 0 70px rgba(0,0,0,.95),
+    inset 0 0 0 1px rgba(255,255,255,.05),
+    inset -10px 0 16px -10px rgba(0,0,0,.95),
+    4px 4px 0 #0a0a0d,
+    8px 8px 0 #0e0e12,
+    14px 18px 40px -8px rgba(0,0,0,.9);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  overflow:hidden;padding:34px 26px;
+  border-radius:1px 4px 4px 1px;
+}
+.cover-front::before{
+  content:'';position:absolute;inset:16px;
+  border:1px solid rgba(255,255,255,.06);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 1px 0 rgba(0,0,0,.9);
+  pointer-events:none;
+}
+.cover-front::after{
+  content:'';position:absolute;top:-60%;left:-70%;
+  width:38%;height:220%;
+  background:linear-gradient(90deg,transparent,
+      rgba(210,222,255,.06) 35%,rgba(230,240,255,.18) 50%,
+      rgba(210,222,255,.06) 65%,transparent);
+  transform:rotate(17deg);pointer-events:none;
+  animation:sweep 12s ease-in-out infinite;
+}
+@keyframes sweep{
+  0%{transform:translateX(0) rotate(17deg);opacity:0}
+  12%{opacity:1}
+  55%{transform:translateX(780px) rotate(17deg);opacity:0}
+  100%{transform:translateX(780px) rotate(17deg);opacity:0}
+}
+
+.jp{font-family:var(--jp);font-weight:200;font-size:12px;
+  letter-spacing:.85em;text-indent:.85em;
+  color:rgba(212,220,240,.55);
+  text-shadow:0 1px 0 rgba(0,0,0,.9), 0 0 14px rgba(150,175,255,.25);
+  margin-bottom:26px}
+.title{font-family:var(--en);font-weight:500;
+  font-size:27px;letter-spacing:.13em;text-indent:.13em;
+  color:#e9ecf5;white-space:nowrap;
+  animation:titleGlow 5.5s ease-in-out infinite}
+@keyframes titleGlow{
+  0%,100%{text-shadow:0 1px 0 #000, 0 0 16px rgba(190,205,255,.16), 0 0 40px rgba(120,140,220,.06)}
+  50%{text-shadow:0 1px 0 #000, 0 0 30px rgba(205,220,255,.38), 0 0 70px rgba(140,165,235,.14)}}
+.rule{position:absolute;bottom:38px;
+  font-family:var(--jp);font-weight:300;
+  font-size:8px;letter-spacing:.22em;
+  color:rgba(190,200,225,.28);
+  text-align:center;line-height:1.9}
+
+/* ---- الضهر الداخلي ---- */
+.cover-back{
+  transform:rotateY(180deg);
+  background-color:#0a0a0d;
+  background-image:
+    radial-gradient(120% 90% at 50% 40%, rgba(70,55,45,.5), transparent 70%),
+    var(--noise);
+  background-blend-mode:normal,overlay;
+  box-shadow:
+    inset 0 0 90px rgba(0,0,0,.92),
+    inset 0 0 0 1px rgba(255,255,255,.03),
+    inset 10px 0 16px -10px rgba(0,0,0,.95);
+  display:flex;align-items:center;justify-content:center;
+  border-radius:1px 4px 4px 1px;
+}
+.cover-back::before{
+  content:'';position:absolute;inset:20px;
+  border:1px solid rgba(255,255,255,.05);pointer-events:none;
+}
+.cover-back-text{
+  font-family:var(--jp);
+  font-size:9px;font-weight:300;
+  letter-spacing:.4em;
+  color:rgba(180,170,160,.18);
+  writing-mode:vertical-rl;text-orientation:upright;
+  line-height:1.8;
+}
+
+/* ========== استجابة ========== */
+@media (max-width:760px){
+  .stage{padding:80px}
+  .book{width:250px;height:360px}
+  .title{font-size:21px}
+  .jp{font-size:10px;letter-spacing:.65em;text-indent:.65em}
+  .written-name{font-size:24px;line-height:24px}
+  .page-header{font-size:7px;letter-spacing:.3em}
+  .first-page{padding:18px 16px 18px 48px}
+  .book.open{transform:translateX(65px) rotateX(-4deg) rotateY(-7deg)}
+}
+@media (max-width:520px){
+  .stage{padding:40px}
+  .book{width:200px;height:288px}
+  .title{font-size:17px}
+  .jp{font-size:9px;letter-spacing:.5em;text-indent:.5em;margin-bottom:18px}
+  .written-name{font-size:19px;line-height:20px}
+  .page-header{font-size:6px;letter-spacing:.22em;margin-bottom:8px;padding-bottom:6px}
+  .first-page{padding:14px 12px 14px 38px}
+  .rule{bottom:28px;font-size:7px}
+  .book.open{transform:translateX(45px) rotateX(-4deg) rotateY(-6deg)}
+}
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="aura"></div>
+  <div class="vignette"></div>
+</div>
+
+<canvas id="dust"></canvas>
+
+<!-- المسرح — الضغط في أي مكان منه بيفتح -->
+<div class="stage" id="stage">
+  <div class="parallax" id="parallax">
+    <div class="float">
+      <div class="book" id="book">
+        <div class="shadow"></div>
+        <div class="pages-stack"></div>
+
+        <div class="first-page">
+          <div class="page-header">死亡ノート ─ 名前を書かれた人間は死ぬ</div>
+          <div class="written-name" dir="rtl">
+            <span>روجينا</span>
+            <span class="arrow">←</span>
+            <span class="skull">☠</span>
+          </div>
+        </div>
+
+        <div class="cover" id="cover">
+          <div class="cover-face cover-front">
+            <div class="jp">デスノート</div>
+            <h1 class="title">DEATH NOTE</h1>
+            <div class="rule">このノートに名前を書かれた人間は死ぬ</div>
+          </div>
+          <div class="cover-face cover-back">
+            <div class="cover-back-text">死神は魂を奪う</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grain"></div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ===== غبار ===== */
+  var cv = document.getElementById('dust');
+  var ctx = cv.getContext('2d');
+  var W=0, H=0, DPR=1, parts=[];
+
+  var sprite = document.createElement('canvas');
+  sprite.width = sprite.height = 64;
+  var sctx = sprite.getContext('2d');
+  var g = sctx.createRadialGradient(32,32,0,32,32,32);
+  g.addColorStop(0,'rgba(228,236,255,1)');
+  g.addColorStop(0.35,'rgba(190,206,248,.35)');
+  g.addColorStop(1,'rgba(150,175,230,0)');
+  sctx.fillStyle = g;
+  sctx.fillRect(0,0,64,64);
+
+  function makeP(fromBottom){
+    return {
+      x:Math.random()*W,
+      y:fromBottom?Math.random()*H:H+Math.random()*90,
+      s:Math.random()*7+1.6,
+      vx:(Math.random()-.5)*0.14,
+      vy:-(Math.random()*0.34+0.07),
+      a:Math.random()*0.42+0.05,
+      ph:Math.random()*Math.PI*2,
+      sp:Math.random()*0.02+0.004
+    };
+  }
+
+  function resize(){
+    DPR = Math.min(window.devicePixelRatio||1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    cv.width = W*DPR; cv.height = H*DPR;
+    cv.style.width = W+'px'; cv.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    var count = Math.round(Math.min(130, Math.max(45, W/11)));
+    parts = [];
+    for(var i=0;i<count;i++) parts.push(makeP(true));
+  }
+
+  /* ===== بارالاكس ===== */
+  var parallax = document.getElementById('parallax');
+  var mx=0, my=0, cx=0, cy=0;
+
+  function onMove(x,y){
+    mx = (x/window.innerWidth - .5)*2;
+    my = (y/window.innerHeight - .5)*2;
+  }
+  window.addEventListener('mousemove', function(e){onMove(e.clientX,e.clientY);},{passive:true});
+  window.addEventListener('touchmove', function(e){
+    if(e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY);
+  },{passive:true});
+  window.addEventListener('deviceorientation', function(e){
+    if(e.gamma==null) return;
+    mx = Math.max(-1, Math.min(1, e.gamma/35));
+    my = Math.max(-1, Math.min(1, (e.beta-45)/35));
+  },{passive:true});
+
+  /* ===== الفتح — الضغط في أي مكان ===== */
+  var book = document.getElementById('book');
+  var stage = document.getElementById('stage');
+    var busy = false;
+
+  function toggleBook(){
+    if(busy) return;
+    busy = true;
+    book.classList.add('opening');
+    book.classList.toggle('open');
+    setTimeout(function(){ book.classList.remove('opening'); }, 900);
+    setTimeout(function(){ busy = false; }, 2500);
+  }
+
+  // الضغط على أي مكان في المسرح (بما فيه الدفتر) يفتح
+  stage.addEventListener('click', toggleBook);
+  stage.addEventListener('touchstart', function(e){
+    toggleBook();
+  }, {passive:true});
+
+  /* ===== الحلقة ===== */
+  function loop(){
+    cx += (mx-cx)*0.055;
+    cy += (my-cy)*0.055;
+    parallax.style.transform =
+      'rotateY('+(cx*7.5)+'deg) rotateX('+(cy*5.5)+'deg) '+
+      'translate3d('+(cx*-12)+'px,'+(cy*-9)+'px,0)';
+
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<parts.length;i++){
+      var p = parts[i];
+      p.ph += p.sp;
+      p.x += p.vx + Math.sin(p.ph)*0.22;
+      p.y += p.vy;
+      if(p.y<-30 || p.x<-40 || p.x>W+40){
+        parts[i] = makeP(false);
+        continue;
+      }
+      var alpha = p.a * (0.5 + 0.5*Math.sin(p.ph*1.6));
+      if(alpha <= 0.005) continue;
+      var r = p.s*3.2;
+      ctx.globalAlpha = alpha;
+      ctx.drawImage(sprite, p.x-r, p.y-r, r*2, r*2);
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  loop();
+})();
+</script>
+
+</body>
+</html>
